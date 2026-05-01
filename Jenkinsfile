@@ -10,7 +10,10 @@ pipeline {
         }
         stage('Code Quality') {
             steps {
-                bat 'pip install pylint && pylint app/app.py || exit 0'
+                script {
+                    bat 'C:\\Users\\njili\\AppData\\Local\\Programs\\Python\\Python3\\python.exe -m pip install pylint || echo pip ok'
+                    bat 'C:\\Users\\njili\\AppData\\Local\\Programs\\Python\\Python3\\python.exe -m pylint app/app.py || echo Pylint termine'
+                }
             }
         }
         stage('Build') {
@@ -22,7 +25,7 @@ pipeline {
             steps {
                 script {
                     def result = bat(
-                        script: '"C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 run --rm -v "%CD%/tests:/app/tests" static-website python -m pytest tests/',
+                        script: '"C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 run --rm static-website python -m pytest tests/',
                         returnStatus: true
                     )
                     echo "Tests termines avec code: ${result}"
@@ -43,29 +46,29 @@ pipeline {
         stage('Staging') {
             steps {
                 bat '''
-                    "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 rm -f static-website-staging 2>nul || echo ok
+                    "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 rm -f static-website-staging 2>nul
                     "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 run -d --name static-website-staging -p 5001:5000 static-website:v1.0
                 '''
-                echo 'Staging disponible sur http://localhost:5001'
+                echo 'Staging sur http://localhost:5001'
             }
         }
         stage('Production') {
             steps {
                 bat '''
-                    "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 rm -f static-website-prod 2>nul || echo ok
+                    "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 rm -f static-website-prod 2>nul
                     "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 run -d --name static-website-prod -p 5000:5000 static-website:v1.0
                 '''
-                echo 'Production disponible sur http://localhost:5000'
+                echo 'Production sur http://localhost:5000'
             }
         }
     }
     post {
         success {
-            echo '✅ Pipeline CI/CD complet termine avec succes !'
+            echo '✅ Pipeline CI/CD complet termine avec succes!'
             echo 'Application disponible sur http://localhost:5000'
         }
         failure {
-            echo '❌ Pipeline echoue !'
+            echo '❌ Pipeline echoue!'
         }
     }
 }
