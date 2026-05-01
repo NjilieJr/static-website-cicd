@@ -3,22 +3,17 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/NjilieJr/static-website-cicd'
+                git branch: 'main', url: 'https://github.com/NjilieJr/static-website-cicd'
             }
         }
         stage('Code Quality') {
-    steps {
-        script {
-            bat '"C:\\Program Files\\Python311\\python.exe" -m pip install pylint flask'
-            def result = bat(
-                script: '"C:\\Program Files\\Python311\\python.exe" -m pylint app/app.py',
-                returnStatus: true
-            )
-            echo "Pylint score code: ${result}"
-        }
-    }
-}            }
+            steps {
+                script {
+                    bat '"C:\\Program Files\\Python311\\python.exe" -m pip install pylint flask'
+                    def result = bat(script: '"C:\\Program Files\\Python311\\python.exe" -m pylint app/app.py', returnStatus: true)
+                    echo "Pylint code: ${result}"
+                }
+            }
         }
         stage('Build') {
             steps {
@@ -28,11 +23,8 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    def result = bat(
-                        script: '"C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 run --rm static-website python -m pytest tests/',
-                        returnStatus: true
-                    )
-                    echo "Tests termines avec code: ${result}"
+                    def result = bat(script: '"C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 run --rm static-website python -m pytest tests/', returnStatus: true)
+                    echo "Tests code: ${result}"
                 }
             }
         }
@@ -44,7 +36,7 @@ pipeline {
         }
         stage('Review') {
             steps {
-                echo 'Review OK - Image validee pour deploiement'
+                echo 'Review OK - Image validee'
             }
         }
         stage('Staging') {
@@ -62,8 +54,7 @@ pipeline {
     }
     post {
         success {
-            echo 'Pipeline CI/CD complet termine avec succes!'
-            echo 'Application disponible sur http://localhost:5000'
+            echo 'Pipeline termine avec succes!'
         }
         failure {
             echo 'Pipeline echoue!'
