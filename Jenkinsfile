@@ -8,10 +8,17 @@ pipeline {
             }
         }
         stage('Code Quality') {
-            steps {
-                bat '"C:\\Program Files\\Python311\\python.exe" -m pip install pylint || echo pip ok'
-                bat '"C:\\Program Files\\Python311\\python.exe" -m pylint app/app.py || echo Pylint termine'
-            }
+    steps {
+        script {
+            bat '"C:\\Program Files\\Python311\\python.exe" -m pip install pylint flask'
+            def result = bat(
+                script: '"C:\\Program Files\\Python311\\python.exe" -m pylint app/app.py',
+                returnStatus: true
+            )
+            echo "Pylint score code: ${result}"
+        }
+    }
+}            }
         }
         stage('Build') {
             steps {
