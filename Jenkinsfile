@@ -1,4 +1,4 @@
-pipeline {
+﻿pipeline {
     agent any
     stages {
         stage('Clone') {
@@ -16,10 +16,8 @@ pipeline {
             }
         }
         stage('Build') {
-    steps {
-        bat 'set DOCKER_BUILDKIT=0& "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 build -t static-website .'
-    }
-}
+            steps {
+                bat 'set DOCKER_BUILDKIT=0& "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 build -t static-website .'
             }
         }
         stage('Test') {
