@@ -9,10 +9,11 @@ pipeline {
             }
         }
         stage('Code Quality') {
-            steps {
-                bat '"C:\\Users\\njili\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe" -m pip install pylint || echo pip ok'
-                bat '"C:\\Users\\njili\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe" -m pylint app/app.py || echo Pylint termine'
-            }
+    steps {
+        bat '"C:\\Program Files\\Python311\\python.exe" -m pip install pylint || echo pip ok'
+        bat '"C:\\Program Files\\Python311\\python.exe" -m pylint app/app.py || echo Pylint termine'
+    }
+}
         }
         stage('Build') {
             steps {
