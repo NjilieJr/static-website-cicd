@@ -10,10 +10,8 @@ pipeline {
         }
         stage('Code Quality') {
             steps {
-                script {
-                    bat 'C:\\Users\\njili\\AppData\\Local\\Programs\\Python\\Python3\\python.exe -m pip install pylint || echo pip ok'
-                    bat 'C:\\Users\\njili\\AppData\\Local\\Programs\\Python\\Python3\\python.exe -m pylint app/app.py || echo Pylint termine'
-                }
+                bat '"C:\\Users\\njili\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe" -m pip install pylint || echo pip ok'
+                bat '"C:\\Users\\njili\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe" -m pylint app/app.py || echo Pylint termine'
             }
         }
         stage('Build') {
