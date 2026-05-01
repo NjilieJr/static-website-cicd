@@ -1,6 +1,5 @@
 pipeline {
     agent any
-
     stages {
         stage('Clone') {
             steps {
@@ -9,9 +8,10 @@ pipeline {
             }
         }
         stage('Code Quality') {
-    steps { 
-"C:\\Program Files\\Python311\\python.exe"    }
-}
+            steps {
+                bat '"C:\\Program Files\\Python311\\python.exe" -m pip install pylint || echo pip ok'
+                bat '"C:\\Program Files\\Python311\\python.exe" -m pylint app/app.py || echo Pylint termine'
+            }
         }
         stage('Build') {
             steps {
@@ -42,30 +42,24 @@ pipeline {
         }
         stage('Staging') {
             steps {
-                bat '''
-                    "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 rm -f static-website-staging 2>nul
-                    "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 run -d --name static-website-staging -p 5001:5000 static-website:v1.0
-                '''
+                bat '"C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 rm -f static-website-staging 2>nul & "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 run -d --name static-website-staging -p 5001:5000 static-website:v1.0'
                 echo 'Staging sur http://localhost:5001'
             }
         }
         stage('Production') {
             steps {
-                bat '''
-                    "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 rm -f static-website-prod 2>nul
-                    "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 run -d --name static-website-prod -p 5000:5000 static-website:v1.0
-                '''
+                bat '"C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 rm -f static-website-prod 2>nul & "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" -H tcp://localhost:2375 run -d --name static-website-prod -p 5000:5000 static-website:v1.0'
                 echo 'Production sur http://localhost:5000'
             }
         }
     }
     post {
         success {
-            echo '✅ Pipeline CI/CD complet termine avec succes!'
+            echo 'Pipeline CI/CD complet termine avec succes!'
             echo 'Application disponible sur http://localhost:5000'
         }
         failure {
-            echo '❌ Pipeline echoue!'
+            echo 'Pipeline echoue!'
         }
     }
 }
